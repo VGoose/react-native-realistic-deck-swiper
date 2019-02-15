@@ -1,19 +1,34 @@
 {
-  "main": "node_modules/expo/AppEntry.js",
+  "name": "react-native-deck-swiper",
+  "version": "0.1.0",
+  "description": "Deck swiper with realistic physics.",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "eject": "expo eject"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
-    "expo": "^32.0.0",
-    "mathjs": "^5.4.2",
-    "react": "16.5.0",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VGoose/react-native-deck-swiper.git"
   },
-  "devDependencies": {
-    "babel-preset-expo": "^5.0.0"
+  "keywords": [
+    "react-native",
+    "swipe",
+    "swiper",
+    "deck",
+    "cards",
+    "tinder",
+    "NYer",
+    "Today",
+    "realistic",
+    "physics"
+  ],
+  "author": "Anh Vo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/VGoose/react-native-deck-swiper/issues"
   },
-  "private": true
+  "homepage": "https://github.com/VGoose/react-native-deck-swiper#readme"
 }
