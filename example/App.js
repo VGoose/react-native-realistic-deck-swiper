@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Dimensions, Image, Animated, PanResponder } from 'react-native';
 import math from 'mathjs'
+import Swiper from '../index'
 
 const SCREEN_HEIGHT = Dimensions.get('window').height
 const SCREEN_WIDTH = Dimensions.get('window').width
@@ -49,11 +50,11 @@ export default class App extends React.Component {
 
     this.rotateAndTranslate = {
       transform: [
-      ...this.position.getTranslateTransform(),
-      {
-        rotate: this.rotate
-      },
-    ]
+        ...this.position.getTranslateTransform(),
+        {
+          rotate: this.rotate
+        },
+      ]
     }
 
     this.likeOpacity = this.position.x.interpolate({
@@ -78,6 +79,13 @@ export default class App extends React.Component {
       extrapolate: 'clamp'
     })
 
+  }
+  _renderCard = (item) => {
+    <View style={{ flex: 1 }}>
+      <Image
+        style={{ flex: 1, height: null, width: null, resizeMode: 'cover', borderRadius: 20 }}
+        source={item.uri} />
+    </View>
   }
   componentWillMount() {
     this.PanResponder = PanResponder.create({
@@ -221,20 +229,7 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
-        <View style={{ height: 60 }}>
-
-        </View>
-        <View style={{ flex: 1, alignItems: 'center' }}>
-          {this.renderUsers()}
-        </View>
-        <View style={{ height: 60, alignItems: 'center' }}>
-
-        </View>
-
-
-      </View>
-
+      <Swiper cardsData={Users} renderCard={_renderCard}/>
     );
   }
 }
