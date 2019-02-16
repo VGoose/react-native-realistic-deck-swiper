@@ -89,31 +89,13 @@ export default class App extends React.Component {
 
         const originX = 1 / 2 * (250) + (SCREEN_WIDTH - 250) / 2
         const originY = 1 / 2 * (400) + 70 //offset from top
-
-        let initalX = x0 - originX
-        let initialY = -(y0 - originY)
-
         let x = moveX - originX
         let y = moveY - originY
-
-        let radius = Math.sqrt(initalX * initalX + initialY * initialY)
-        let normalizedRadius = radius / Math.sqrt(125 * 125 + 200 * 200)
-
-        let magnitudeV = Math.sqrt(vx * vx + vy * vy)
-        let magnitudeD = Math.sqrt(dx * dx + dy * dy)
         let crossProduct = math.cross([x, y, 0], [dx, dy, 0])
-        let dotProduct = math.dot([x, y, 0], [dx, dy, 0])
-        let sign = crossProduct[2] > 0
-          ? 1
-          : -1
         let result = crossProduct[2]
 
-        this.setState({
-          result
-        })
         Animated.event([null, { dx: this.position.x, dy: this.position.y }])(null, gestureState)
         this.rotation.setValue(result)
-        // this.position.setValue({ x: gestureState.dx, y: gestureState.dy })
       },
       onPanResponderRelease: (evt, gestureState) => {
         const { moveX, moveY, dx, dy, vx, vy } = gestureState
@@ -157,10 +139,6 @@ export default class App extends React.Component {
         else {
           Animated.spring(this.rotation, {
             toValue: 0,
-            // friction: 7,
-            // tension: 5,
-            // speed: 3,
-            // bounciness: 0,
             stiffness: 50,
             damping: 30,
             mass: 0.5
@@ -251,15 +229,7 @@ export default class App extends React.Component {
           {this.renderUsers()}
         </View>
         <View style={{ height: 60, alignItems: 'center' }}>
-          <Text>
-            cross product result: {this.state.result}
-          </Text>
-          <Text>
-            vx: {this.state.vx}
-          </Text>
-          <Text>
-            vy: {this.state.vy}
-          </Text>
+
         </View>
 
 

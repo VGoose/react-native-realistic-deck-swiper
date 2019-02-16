@@ -30,5 +30,8 @@
   "bugs": {
     "url": "https://github.com/VGoose/react-native-deck-swiper/issues"
   },
-  "homepage": "https://github.com/VGoose/react-native-deck-swiper#readme"
+  "homepage": "https://github.com/VGoose/react-native-deck-swiper#readme",
+  "dependencies": {
+    "prop-types": "^15.7.2"
+  }
 }
