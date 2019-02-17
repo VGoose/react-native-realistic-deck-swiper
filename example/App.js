@@ -1,22 +1,18 @@
 import React from 'react';
 import { StyleSheet, Text, View, Dimensions, Image, Animated, PanResponder } from 'react-native';
-import math from 'mathjs'
-import Swiper from '../index'
+// import math from 'mathjs'
+import Swiper from './swiper'
+import Foo from './foo'
 
 const SCREEN_HEIGHT = Dimensions.get('window').height
 const SCREEN_WIDTH = Dimensions.get('window').width
-import Icon from 'react-native-vector-icons/Ionicons'
+
 const Users = [
   { id: "1", uri: require('./assets/1.jpg') },
   { id: "2", uri: require('./assets/2.jpg') },
   { id: "3", uri: require('./assets/3.jpg') },
   { id: "4", uri: require('./assets/4.jpg') },
   { id: "5", uri: require('./assets/5.jpg') },
-  { id: "6", uri: require('./assets/1.jpg') },
-  { id: "7", uri: require('./assets/2.jpg') },
-  { id: "8", uri: require('./assets/3.jpg') },
-  { id: "9", uri: require('./assets/4.jpg') },
-  { id: "10", uri: require('./assets/5.jpg') },
 ]
 
 export default class App extends React.Component {
@@ -81,9 +77,10 @@ export default class App extends React.Component {
 
   }
   _renderCard = (item) => {
-    <View style={{ flex: 1 }}>
+
+    return <View style={{ flex: 1 }}>
       <Image
-        style={{ flex: 1, height: null, width: null, resizeMode: 'cover', borderRadius: 20 }}
+        style={{ flex: 1, width: 300, height: 400, borderRadius: 20 }}
         source={item.uri} />
     </View>
   }
@@ -99,11 +96,12 @@ export default class App extends React.Component {
         const originY = 1 / 2 * (400) + 70 //offset from top
         let x = moveX - originX
         let y = moveY - originY
-        let crossProduct = math.cross([x, y, 0], [dx, dy, 0])
-        let result = crossProduct[2]
+        // let crossProduct = math.cross([x, y, 0], [dx, dy, 0])
+        let rotation = x * dy - y * dx
+        // let result = crossProduct[2]
 
         Animated.event([null, { dx: this.position.x, dy: this.position.y }])(null, gestureState)
-        this.rotation.setValue(result)
+        this.rotation.setValue(rotation)
       },
       onPanResponderRelease: (evt, gestureState) => {
         const { moveX, moveY, dx, dy, vx, vy } = gestureState
@@ -111,10 +109,12 @@ export default class App extends React.Component {
         const originY = 1 / 2 * (400) + 70 //offset from top
         let x = moveX - originX
         let y = moveY - originY
-        let crossProduct = math.cross([x, y, 0], [dx, dy, 0])
-        let resultRelease = crossProduct[2]
-        let intCrossProduct = math.cross([x, y, 0], [vx * 1000, vy * 1000, 0])
-        let interpolation = intCrossProduct[2]
+        // let crossProduct = math.cross([x, y, 0], [dx, dy, 0])
+        // let resultRelease = crossProduct[2]
+        let rotation0 = x * dy - y * dx
+        // let intCrossProduct = math.cross([x, y, 0], [vx * 1000, vy * 1000, 0])
+        // let interpolation = intCrossProduct[2]
+        let rotation1000 = x * vy * 1000 - y * vx * 1000
         this.setState({ vx, vy, resultRelease })
         const vMagnitude = Math.sqrt(vx * vx + vy * vy)
         if (vMagnitude > .4) {
@@ -124,7 +124,7 @@ export default class App extends React.Component {
               duration: 1000
             }),
             Animated.timing(this.rotation, {
-              toValue: resultRelease + interpolation,
+              toValue: rotation0 + rotation1000,
               duration: 1000
             })
           ]
@@ -229,7 +229,7 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <Swiper cardsData={Users} renderCard={_renderCard}/>
+      <Swiper cardsData={Users} renderCard={this._renderCard} />
     );
   }
 }
