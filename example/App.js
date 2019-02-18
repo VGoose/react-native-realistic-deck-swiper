@@ -8,11 +8,11 @@ const SCREEN_HEIGHT = Dimensions.get('window').height
 const SCREEN_WIDTH = Dimensions.get('window').width
 
 const Users = [
-  { id: "1", uri: require('./assets/1.jpg') },
-  { id: "2", uri: require('./assets/2.jpg') },
-  { id: "3", uri: require('./assets/3.jpg') },
-  { id: "4", uri: require('./assets/4.jpg') },
-  { id: "5", uri: require('./assets/5.jpg') },
+  { id: "1", desc: 'icecream', uri: require('./assets/1.jpg') },
+  { id: "2", desc: 'soup', uri: require('./assets/2.jpg') },
+  { id: "3", desc: 'popcorn', uri: require('./assets/3.jpg') },
+  { id: "4", desc: 'popcorn+', uri: require('./assets/4.jpg') },
+  { id: "5", desc: 'popcorn++', uri: require('./assets/5.jpg') },
 ]
 
 export default class App extends React.Component {
@@ -80,7 +80,7 @@ export default class App extends React.Component {
 
     return <View style={{ flex: 1 }}>
       <Image
-        style={{ flex: 1, width: 300, height: 400, borderRadius: 20 }}
+        style={{ flex: 1, width: 300, height: 400, borderRadius: 5 }}
         source={item.uri} />
     </View>
   }
