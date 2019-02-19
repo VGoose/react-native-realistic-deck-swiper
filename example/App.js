@@ -77,11 +77,7 @@ export default class App extends React.Component {
 
   }
   _renderCard = (item) => {
-
-    return <View style={{ flex: 1 }}>
-      <Image
-        style={{ flex: 1, width: 300, height: 400, borderRadius: 5 }}
-        source={item.uri} />
+    return <View style={{ width: 300, height: 400, borderRadius: 5 }}>
     </View>
   }
   componentWillMount() {
@@ -229,7 +225,12 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <Swiper cardsData={Users} renderCard={this._renderCard} />
+      <Swiper cardsData={Users} renderCard={this._renderCard} 
+      style={{margin: 50,
+        backgroundColor: 'white',
+        borderColor: 'black',
+        borderWidth: 1,
+        borderRadius: 5,}}/>
     );
   }
 }

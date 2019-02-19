@@ -10,32 +10,52 @@ export default class Swiper extends React.Component {
     super(props)
     this.state = {
       currentIndex: this.props.startIndex,
-      cardCenter: null
+      cardCenter: null,
     }
     this.initializePanResponder()
-    this.position = new Animated.ValueXY()
-    this.rotation = new Animated.Value()
-    this.cardOffsets = [],
-      this.rotate = this.rotation.interpolate({
-        inputRange: [-100000, 0, 100000],
-        outputRange: ['-150deg', '0deg', '150deg'],
-        // extrapolate: 'clamp'
-      })
 
-    this.rotateAndTranslate = {
+    this.position = new Animated.ValueXY({ x: 0, y: 0 })
+    this.rotationTopCard = new Animated.Value(0)
+    this.rotationBottomCard = new Animated.Value(0)
+    this.rotationBottomCardValue = null
+    this.rotationBottomCard.addListener(({ value }) => this.rotationBottomCardValue = value)
+    this.cardOffsets = []
+
+    this.rotateTop = this.rotationTopCard.interpolate({
+      inputRange: [-100000, 0, 100000],
+      outputRange: ['-150deg', '0deg', '150deg'],
+    })
+    this.rotateBottom = this.rotationBottomCard.interpolate({
+      inputRange: [-4, 0, 4],
+      outputRange: ['-4deg', '0deg', '4deg']
+    })
+    this.topTransform = {
       transform: [
         ...this.position.getTranslateTransform(),
         {
-          rotate: this.rotate
+          rotate: this.rotateTop
         },
       ]
     }
+    this.bottomTransform = {
+      transform: [{ rotate: this.rotateBottom }]
+    }
+
+
   }
   componentDidMount() {
     //get initial offset angles for the visible deck
-    this.initializeOffsets()
+    const { offsetAngleMin, offsetAngleMax } = this.props
+    this.cardOffsets = this.getInitialOffsets(offsetAngleMin, offsetAngleMax)
+    this.rotationTopCard.setValue(this.cardOffsets[0] * 100000 / 150)
+    this.rotationBottomCard.setValue(this.cardOffsets[2])
+
+  }
+  componentWillUnmount() {
+    this.rotationBottomCard.removeAllListeners()
   }
   static defaultProps = {
+    offsetAngleMin: -4,
     offsetAngleMax: 4,
     visibleDeckSize: 3,
     startIndex: 0,
@@ -51,12 +71,13 @@ export default class Swiper extends React.Component {
         let y = moveY - cardCenter.y
         let rotation = x * dy - y * dx
 
-        this.rotation.setValue(rotation)
+        this.rotationTopCard.setValue(rotation)
         Animated.event([null, { dx: this.position.x, dy: this.position.y }])(null, gestureState)
       },
       onPanResponderRelease: (e, gestureState) => {
         const { moveX, moveY, dx, dy, vx, vy } = gestureState
-        const { cardCenter } = this.state
+        const { cardCenter, currentIndex } = this.state
+        const { cardsData } = this.props
         let x = moveX - cardCenter.x
         let y = moveY - cardCenter.y
 
@@ -69,18 +90,18 @@ export default class Swiper extends React.Component {
               toValue: { x: vx * 1000, y: vy * 1000 },
               duration: 1000
             }),
-            Animated.timing(this.rotation, {
+            Animated.timing(this.rotationTopCard, {
               toValue: rotation0 + rotation1000,
               duration: 1000
             })
           ]
           ).start(() => {
-            this.onSwipe()
+            this.onSwipe(currentIndex, cardsData)
           })
         }
         else {
-          Animated.spring(this.rotation, {
-            toValue: 0,
+          Animated.spring(this.rotationTopCard, {
+            toValue: this.getInterpolatedRotation(this.cardOffsets[0]),
             stiffness: 50,
             damping: 30,
             mass: 0.5
@@ -94,11 +115,6 @@ export default class Swiper extends React.Component {
     })
   }
 
-  measureParentView = (event) => {
-    const { x, y, width, height } = event.nativeEvent.layout
-  }
-
-
   measureAnimatedView = (event) => {
     const { x, y, width, height } = event.nativeEvent.layout
     const cardCenter = { x: x + width / 2, y: y + height / 2 }
@@ -107,110 +123,139 @@ export default class Swiper extends React.Component {
         cardCenter
       })
   }
+  //TODO
+  //problems: uniques <= range(min, max)
+  //if deckSize > range(min, max) there's not enough uniques
+  //sol: add minimumOffsetDelta, calc and throw error if deckSize too big
+  getUniqueElement = (array, min, max) => {
+    let newElement = this.getInitialRotation(min, max)
+    while (array.some(e => e === newElement)) {
+      newElement = this.getInitialRotation(min, max)
+    }
+    return newElement
+  }
+  updateCardOffsets = (offsets) => {
+    const { offsetAngleMin, offsetAngleMax } = this.props
+    return [...offsets.slice(1), this.getUniqueElement(offsets.slice(1), offsetAngleMin, offsetAngleMax)]
+  }
+  getInterpolatedRotation = (deg) => {
+    return deg * 100000 / 150
+  }
+  resetAnimatedValues = (x0, y0, rotation0) => {
+    this.position.setValue({ x: x0, y: y0 })
+    this.rotationTopCard.setValue(rotation0)
 
-  onSwipe = () => {
-    const { currentIndex } = this.state
-    const { cardsData } = this.props
-    //handle offset angles
-    this.cardOffsets.shift()
-    console.log(this.cardOffsets)
-    this.cardOffsets.push(this.getInitialRotation())
-    console.log(this.cardOffsets)
-    const topCardInitialRotation = this.cardOffsets[0] * 100000 / 150
-    //update currentIndex and return position and rotation values to initial position
+
+  }
+  animateBottomCard = (cb, value) => {
+    Animated.timing(this.rotationBottomCard, {
+      toValue: value,
+      duration: 500
+    }).start(cb())
+  }
+  onSwipe = (currentIndex, cardsData) => {
+    this.cardOffsets = this.updateCardOffsets(this.cardOffsets)
+    console.log('onswipe: ' + this.cardOffsets)
+    const topCardInitialRotation = this.getInterpolatedRotation(this.cardOffsets[0])
+    this.rotationBottomCard.setValue(this.cardOffsets[this.cardOffsets.length - 2])
+    console.log('onswipe rbc: ' + this.rotationBottomCardValue)
+
     if (currentIndex === cardsData.length - 1) {
-      this.setState({ currentIndex: 0 }, () => {
-        this.position.setValue({ x: 0, y: 0 })
-        this.rotation.setValue(topCardInitialRotation)
-      })
+      this.setState({ currentIndex: 0 }, this.resetAnimatedValues(0, 0, topCardInitialRotation))
     } else {
-      this.setState({ currentIndex: this.state.currentIndex + 1 }, () => {
-        this.position.setValue({ x: 0, y: 0 })
-        this.rotation.setValue(topCardInitialRotation)
-      })
+      this.setState({ currentIndex: this.state.currentIndex + 1 }, this.resetAnimatedValues(0, 0, topCardInitialRotation))
     }
   }
 
-  initializeOffsets = () => {
+  getInitialOffsets = (min, max) => {
     const { visibleDeckSize } = this.props
+    let offsets = []
+    //TODO
+    //O(n*m) where n is visibleDeckSize and m depends on probability of hitting a non-unique
+    //which gets higher as offsets.length approaches visibleDeckSize
+    //O(n^2)
+    //Sol: initialize map of all possible offsets 
+    //add to offsets from that map and remove from map
+    //shift offsets adds to the map
+    //O(n)
     for (i = 0; i < visibleDeckSize; i++) {
-      this.cardOffsets.push(this.getInitialRotation())
+      offsets.push(this.getUniqueElement(offsets, min, max))
     }
+    return offsets
   }
-  getInitialRotation = () => {
-    const { offsetAngleMax } = this.props
-    return deg = Math.random() * 2 * offsetAngleMax - offsetAngleMax
+  getInitialRotation = (min, max) => {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
-  makeCard = (i) => {
-    const { cardsData, renderCard, keyExtractor, visibleDeckSize } = this.props
-    const { currentIndex } = this.state
-    let j = i
-    if (j > cardsData.length - 1) {
-      j = j - cardsData.length
-    }
-    if (i === currentIndex) {
-      return <Animated.View
-        style={
-          [
-            this.rotateAndTranslate,
-            {
-              ...styles.card,
-              zIndex: cardsData.length + 100 - i,
-            }
-          ]
-        }
-        onLayout={event => this.measureAnimatedView(event)}
-        key={keyExtractor ? keyExtractor(cardsData[j]) : j}
-        desc={cardsData[j].desc}
 
-        {...this.panResponder.panHandlers}
-      >
-        {renderCard(cardsData[j])}
-      </Animated.View>
-    } else {
-      return <Animated.View
-        style={
-          {
-            ...styles.card,
-            zIndex: cardsData.length + 100 - i,
-            transform: [{ rotate: `${this.cardOffsets[i - currentIndex]}deg` }]
-          }
-        }
-        onLayout={event => this.measureAnimatedView(event)}
-        key={keyExtractor ? keyExtractor(cardsData[j]) : j}
-        desc={cardsData[j].desc}
-      >
-        {renderCard(cardsData[j])}
-      </Animated.View>
+  makeCard = (style, deckIndex, currentIndex, visibleDeckSize, renderCard, cardsData) => {
+    let cardIndex = currentIndex + deckIndex
+    if (cardIndex >= cardsData.length) {
+      cardIndex = cardIndex - cardsData.length
     }
+    const isTopCard = deckIndex === 0
+    const isLastCard = deckIndex === visibleDeckSize - 1
+    if (isLastCard) {
+      // this.animateBottomCard(() => { },this.cardOffsets[deckIndex])
+    }
+    return <Card
+      transform={
+        isTopCard
+          ? this.topTransform
+          : isLastCard
+            ? this.bottomTransform
+            : { transform: [{ rotate: `${this.cardOffsets[deckIndex]}deg` }] }
+      }
+      cardsData={cardsData}
+      renderCard={renderCard}
+      measureAnimatedView={this.measureAnimatedView}
+      cardIndex={cardIndex}
+      deckIndex={deckIndex}
+      key={deckIndex}
+      panHandlers={this.panResponder.panHandlers}
+      style={style}
+    />
   }
-  makeDeck = () => {
-    let { currentIndex } = this.state
-    const { visibleDeckSize } = this.props
+  makeDeck = (style, currentIndex, visibleDeckSize, renderCard, cardsData) => {
     let deck = []
-    for (i = currentIndex; i < visibleDeckSize + currentIndex; i++) {
-      deck.push(this.makeCard(i))
+    for (i = 0; i < visibleDeckSize; i++) {
+      deck.push(this.makeCard(style, i, currentIndex, visibleDeckSize, renderCard, cardsData))
     }
     return deck
   }
 
   render() {
-    console.log('render')
+    this.animateBottomCard(() => { },this.cardOffsets[2])
+    const { currentIndex } = this.state
+    const { visibleDeckSize, renderCard, cardsData, style } = this.props
     return (
       <View
         style={styles.container}
-        onLayout={(event) => this.measureParentView(event)}
       >
-        {this.makeDeck()}
+        {this.makeDeck(style, currentIndex, visibleDeckSize, renderCard, cardsData)}
       </View>
     )
   }
 }
-
+const Card = ({ style, panHandlers, deckIndex, transform, cardsData, cardIndex, renderCard, measureAnimatedView }) => {
+  const _style = {
+    ...style,
+    ...styles.card,
+    zIndex: cardsData.length + 100 - deckIndex,
+    ...transform,
+  }
+  return <Animated.View
+    {...panHandlers}
+    style={_style}
+    onLayout={event => measureAnimatedView(event)}
+  >
+    {renderCard(cardsData[cardIndex])}
+  </Animated.View>
+}
 Swiper.propTypes = {
   cardsData: PropTypes.array.isRequired,
   renderCard: PropTypes.func.isRequired,
-  keyExtractor: PropTypes.func,
   visibleDeckSize: PropTypes.number,
   offsetAngleMax: PropTypes.number,
   startIndex: PropTypes.number,
@@ -218,7 +263,8 @@ Swiper.propTypes = {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'relative'
+    position: 'relative',
+
   },
   card: {
     position: 'absolute',
