@@ -20,7 +20,7 @@ export default class App extends React.Component {
       <Swiper
         cardsData={Data}
         renderCard={this._renderCard}
-        visibleDeckSize={2}
+        visibleDeckSize={3}
         offSetAngleMin={-3}
         offSetAngleMax={3}
         velocityThreshold={0.4}
@@ -41,3 +41,6 @@ export default class App extends React.Component {
     );
   }
 }
+
+
+

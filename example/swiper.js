@@ -231,6 +231,7 @@ export default class Swiper extends React.Component {
     }
     return deck
   }
+
   render() {
     const { currentIndex } = this.state
     const { visibleDeckSize, renderCard, cardsData, style, containerStyle } = this.props
