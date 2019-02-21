@@ -2,6 +2,7 @@
 import React from 'react'
 import { StyleSheet, View, Animated, PanResponder } from 'react-native';
 import PropTypes from 'prop-types'
+import { getInitialOffsets, getInterpolatedRotation, updateCardOffsets } from './helpers'
 
 const ROTATION_MAGNITUDE = 25000 * 16
 
@@ -41,10 +42,10 @@ export default class Swiper extends React.Component {
   }
   componentDidMount() {
     //get initial offset angles for the visible deck
-    const { offsetAngleMin, offsetAngleMax } = this.props
-    this.cardOffsets = this.getInitialOffsets(offsetAngleMin, offsetAngleMax)
+    const { offsetAngleMin, offsetAngleMax, visibleDeckSize } = this.props
+    this.cardOffsets = getInitialOffsets(offsetAngleMin, offsetAngleMax, visibleDeckSize)
 
-    this.rotationTopCard.setValue(this.getInterpolatedRotation(this.cardOffsets[0]))
+    this.rotationTopCard.setValue(getInterpolatedRotation(this.cardOffsets[0], ROTATION_MAGNITUDE))
     this.rotationBottomCard.setValue(this.cardOffsets[this.cardOffsets.length - 2])
 
   }
@@ -114,7 +115,7 @@ export default class Swiper extends React.Component {
   }
   animateReset = () => {
     Animated.spring(this.rotationTopCard, {
-      toValue: this.getInterpolatedRotation(this.cardOffsets[0]),
+      toValue: getInterpolatedRotation(this.cardOffsets[0], ROTATION_MAGNITUDE),
       stiffness: 50,
       damping: 30,
       mass: 0.5
@@ -132,64 +133,28 @@ export default class Swiper extends React.Component {
         cardCenter,
       })
   }
-  getInitialOffsets = (min, max) => {
-    const { visibleDeckSize } = this.props
-    let offsets = []
-    //TODO
-    //O(n*m) where n is visibleDeckSize and m depends on probability of hitting a non-unique
-    //which gets higher as offsets.length approaches visibleDeckSize
-    //O(n^2)
-    //Sol: initialize map of all possible offsets 
-    //add to offsets from that map and remove from map
-    //shift offsets adds to the map
-    //O(n)
-    for (let i = 0; i < visibleDeckSize; i++) {
-      offsets.push(this.getUniqueElement(offsets, min, max))
-    }
-    return offsets
-  }
 
-  //TODO
-  //problems: uniques <= range(min, max)
-  //if deckSize > range(min, max) there's not enough uniques
-  //sol: add minimumOffsetDelta, calc and throw error if deckSize too big
-  getUniqueElement = (array, min, max) => {
-    let newElement = this.getInitialRotation(min, max)
-    while (array.some(e => e === newElement)) {
-      newElement = this.getInitialRotation(min, max)
-    }
-    return newElement
-  }
-  updateCardOffsets = (offsets) => {
-    const { offsetAngleMin, offsetAngleMax } = this.props
-    return [...offsets.slice(1), this.getUniqueElement(offsets.slice(1), offsetAngleMin, offsetAngleMax)]
-  }
-  getInterpolatedRotation = (deg) => {
-    return deg * ROTATION_MAGNITUDE / 360
-  }
   resetTopCardAnimatedValues = (x0, y0, rotation0) => {
     this.position.setValue({ x: x0, y: y0 })
     this.rotationTopCard.setValue(rotation0)
   }
 
   onSwipe = (currentIndex, cardsData) => {
-    this.cardOffsets = this.updateCardOffsets(this.cardOffsets)
-    const topCardInitialRotation = this.getInterpolatedRotation(this.cardOffsets[0])
+    const { offsetAngleMin, offsetAngleMax } = this.props
+    this.cardOffsets = updateCardOffsets(this.cardOffsets, offsetAngleMin, offsetAngleMax)
+    const topCardInitialRotation =
+      getInterpolatedRotation(this.cardOffsets[0], ROTATION_MAGNITUDE)
     this.rotationBottomCard.setValue(this.cardOffsets[this.cardOffsets.length - 2])
 
     if (currentIndex === cardsData.length - 1) {
       this.setState({ currentIndex: 0 }, this.resetTopCardAnimatedValues(0, 0, topCardInitialRotation))
     } else {
-      this.setState({ currentIndex: this.state.currentIndex + 1 }, this.resetTopCardAnimatedValues(0, 0, topCardInitialRotation))
+      this.setState({
+        currentIndex: this.state.currentIndex + 1
+      }, this.resetTopCardAnimatedValues(0, 0, topCardInitialRotation))
     }
   }
 
-
-  getInitialRotation = (min, max) => {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
   animateBottomCard = (cb, value) => {
     Animated.timing(this.rotationBottomCard, {
       toValue: value,
