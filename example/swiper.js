@@ -10,7 +10,9 @@ export default class Swiper extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentIndex: Number.isInteger(this.props.startIndex) ? this.props.startIndex : 0,
+      currentIndex: Number.isInteger(this.props.startIndex) && this.props.startIndex >= 0? this.props.startIndex : 0,
+      parentDimensions: null,
+      cardDimensions: null,
       cardCenter: null,
     }
     this.initializePanResponder()
@@ -45,12 +47,34 @@ export default class Swiper extends React.Component {
     }
   }
   componentDidMount() {
-    //get initial offset angles for the deck
     const { offsetAngleMin, offsetAngleMax, deckSize, rotationMultiplier } = this.props
     this.cardOffsets = getInitialOffsets(offsetAngleMin, offsetAngleMax, deckSize)
 
-    this.rotationTopCard.setValue(getInterpolatedRotation(this.cardOffsets[0], ROTATION_MAGNITUDE * rotationMultiplier ))
+    this.rotationTopCard.setValue(getInterpolatedRotation(this.cardOffsets[0], ROTATION_MAGNITUDE * rotationMultiplier))
     this.rotationBottomCard.setValue(this.cardOffsets[this.cardOffsets.length - 2])
+
+  }
+  componentDidUpdate(prevProps, prevState) {
+    const { parentDimensions, cardDimensions } = this.state
+    const { parentDimensions: oldParent, cardDimensions: oldCard } = prevState
+    if (parentDimensions && cardDimensions) {
+      if (
+        oldParent === null
+        || oldCard === null
+        || parentDimensions.x !== oldParent.x
+        || parentDimensions.y !== oldParent.y
+        || cardDimensions.x !== oldCard.x
+        || cardDimensions.y !== oldCard.y
+        || cardDimensions.width !== oldCard.width
+        || cardDimensions.height !== oldCard.height
+      ) {
+        const cardCenter = {
+          x: parentDimensions.x + cardDimensions.x + cardDimensions.width / 2,
+          y: parentDimensions.y + cardDimensions.y + cardDimensions.height / 2
+        }
+        this.setState({ cardCenter })
+      }
+    }
 
   }
 
@@ -71,6 +95,8 @@ export default class Swiper extends React.Component {
       damping: 30,
       mass: 0.5
     },
+    style: {},
+    containerStyle: {}
   }
 
   initializePanResponder = () => {
@@ -94,7 +120,7 @@ export default class Swiper extends React.Component {
 
         const validThreshold = velocityThreshold > 0 ? velocityThreshold : 0.4
         const validTopDuration = topCardAnimationDuration > 0 ? topCardAnimationDuration : 1000
-        
+
         let x = moveX - cardCenter.x
         let y = moveY - cardCenter.y
 
@@ -145,10 +171,28 @@ export default class Swiper extends React.Component {
   }
   measureAnimatedView = (event) => {
     const { x, y, width, height } = event.nativeEvent.layout
-    const cardCenter = { x: x + width / 2, y: y + height / 2 }
-    if (!this.state.cardCenter || cardCenter.x !== this.state.cardCenter.x || cardCenter.y !== this.state.cardCenter.y)
+    const cardDimensions = { x, y, width, height }
+    if (
+      !this.state.cardDimensions
+      || x !== this.state.cardDimensions.x
+      || y !== this.state.cardDimensions.y
+      || width !== this.state.cardDimensions.width
+      || height !== this.state.cardDimensions.height
+    )
       this.setState({
-        cardCenter,
+        cardDimensions: cardDimensions,
+      })
+  }
+  measureParentView = (event) => {
+    const { x, y } = event.nativeEvent.layout
+    const parentDimensions = { x, y }
+    if (
+      !this.state.parentDimensions
+      || x !== this.state.parentDimensions.x
+      || y !== this.state.parentDimensions.y
+    )
+      this.setState({
+        parentDimensions: parentDimensions,
       })
   }
 
@@ -159,12 +203,10 @@ export default class Swiper extends React.Component {
 
   onSwipe = (currentIndex, cardsData) => {
     const { offsetAngleMin, offsetAngleMax, rotationMultiplier } = this.props
-
-
     this.cardOffsets = updateCardOffsets(this.cardOffsets, offsetAngleMin, offsetAngleMax)
     this.rotationBottomCard.setValue(this.cardOffsets[this.cardOffsets.length - 2])
     const topCardInitialRotation =
-      getInterpolatedRotation(this.cardOffsets[0], ROTATION_MAGNITUDE * rotationMultiplier )
+      getInterpolatedRotation(this.cardOffsets[0], ROTATION_MAGNITUDE * rotationMultiplier)
 
     if (currentIndex === cardsData.length - 1) {
       this.setState({ currentIndex: 0 }, this.resetTopCardAnimatedValues(0, 0, topCardInitialRotation))
@@ -222,6 +264,7 @@ export default class Swiper extends React.Component {
     const { deckSize, renderCard, cardsData, style, containerStyle } = this.props
     return (
       <View
+        onLayout={event => this.measureParentView(event)}
         style={{ ...styles.container, ...containerStyle }}
       >
         {this.makeDeck(style, currentIndex, deckSize, renderCard, cardsData)}
@@ -269,7 +312,7 @@ Swiper.propTypes = {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'relative',
+    position: 'relative'
   },
   card: {
     position: 'absolute',

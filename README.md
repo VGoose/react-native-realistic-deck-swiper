@@ -3,6 +3,7 @@
 
 Swipeable deck with realistic physics, based on NYer Today app's cartoons swipe deck. 
 
+![Demo](https://media.giphy.com/media/oX7tHujPDy8mBs246V/giphy.gif)
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
@@ -40,6 +41,12 @@ renderCard | required | function | render function, receives cardsData element |
 |onSwiped| optional | function | callback function to be called on successful card swipe, at gesture release, with velocity vector object {vx, vy}| |
 |onReset|optional|function|callback function to be called on unsuccessful card swipe, at gesture release, with velocity vector object {vx, vy} ||
 
+## Card Style
+\*style objects can be provided but default styles cannot be changed
+|Props | required | type| description | default
+|:---------|:--|:--| :---|:---:|
+|style|optional|object|card style object|{position: relative\*}|
+|containerStyle|optional|object| Swiper container view style object |{position: absolute\*, transform: []\*, zIndex: number\*}|
 
 ## Author
 
