@@ -43,6 +43,7 @@ renderCard | required | function | render function, receives cardsData element |
 
 ## Card Style
 \*style objects can be provided but default styles cannot be changed
+
 |Props | required | type| description | default
 |:---|:---|:---| :---|:---:
 |style|optional|object|card style object|{position: relative\*}|
