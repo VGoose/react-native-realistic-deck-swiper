@@ -24,6 +24,8 @@ export default class App extends React.Component {
         offSetAngleMin={-3}
         offSetAngleMax={3}
         velocityThreshold={0.4}
+        onSwiped={(vector) => console.log('vx is: ', vector.vx, ' ', 'vy is: ', vector.vy)}
+        onReset={() => console.log('reset')}
         containerStyle={{
           display: 'flex',
           alignItems: 'center',
