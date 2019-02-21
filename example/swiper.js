@@ -10,7 +10,7 @@ export default class Swiper extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentIndex: this.props.startIndex,
+      currentIndex: Number.isInteger(this.props.startIndex) ? this.props.startIndex : 0,
       cardCenter: null,
     }
     this.initializePanResponder()
@@ -45,11 +45,11 @@ export default class Swiper extends React.Component {
     }
   }
   componentDidMount() {
-    //get initial offset angles for the visible deck
-    const { offsetAngleMin, offsetAngleMax, visibleDeckSize } = this.props
-    this.cardOffsets = getInitialOffsets(offsetAngleMin, offsetAngleMax, visibleDeckSize)
+    //get initial offset angles for the deck
+    const { offsetAngleMin, offsetAngleMax, deckSize, rotationMultiplier } = this.props
+    this.cardOffsets = getInitialOffsets(offsetAngleMin, offsetAngleMax, deckSize)
 
-    this.rotationTopCard.setValue(getInterpolatedRotation(this.cardOffsets[0], ROTATION_MAGNITUDE))
+    this.rotationTopCard.setValue(getInterpolatedRotation(this.cardOffsets[0], ROTATION_MAGNITUDE * rotationMultiplier ))
     this.rotationBottomCard.setValue(this.cardOffsets[this.cardOffsets.length - 2])
 
   }
@@ -57,7 +57,7 @@ export default class Swiper extends React.Component {
   static defaultProps = {
     offsetAngleMin: -4,
     offsetAngleMax: 4,
-    visibleDeckSize: 3,
+    deckSize: 3,
     infiniteSwipe: true,
     onSwiped: () => { },
     onReset: () => { },
@@ -90,21 +90,25 @@ export default class Swiper extends React.Component {
       onPanResponderRelease: (e, gestureState) => {
         const { moveX, moveY, dx, dy, vx, vy } = gestureState
         const { cardCenter, currentIndex } = this.state
-        const { cardsData, velocityThreshold, topCardAnimationDuration } = this.props
+        const { cardsData, velocityThreshold, topCardAnimationDuration, onSwiped } = this.props
 
+        const validThreshold = velocityThreshold > 0 ? velocityThreshold : 0.4
+        const validTopDuration = topCardAnimationDuration > 0 ? topCardAnimationDuration : 1000
+        
         let x = moveX - cardCenter.x
         let y = moveY - cardCenter.y
 
         let rotation0 = x * dy - y * dx
-        let rotationT = (x * vy - y * vx) * topCardAnimationDuration
+        let rotationT = (x * vy - y * vx) * validTopDuration
 
-        const finalPosition = { x: vx * topCardAnimationDuration, y: vy * topCardAnimationDuration }
+        const finalPosition = { x: vx * validTopDuration, y: vy * validTopDuration }
         const finalRotation = rotation0 + rotationT
 
         const vMagnitude = Math.sqrt(vx * vx + vy * vy)
-        if (vMagnitude > velocityThreshold) {
+        if (vMagnitude > validThreshold) {
+          onSwiped({ vx: vx, vy: vy })
           this.animateCardOffScreen(finalPosition, finalRotation,
-            () => this.onSwipe(currentIndex, cardsData, { vx: vx, vy: vy })
+            () => this.onSwipe(currentIndex, cardsData)
           )
         }
         else {
@@ -131,7 +135,7 @@ export default class Swiper extends React.Component {
   animateReset = (velocityVector) => {
     this.props.onReset(velocityVector)
     Animated.spring(this.rotationTopCard, {
-      toValue: getInterpolatedRotation(this.cardOffsets[0], ROTATION_MAGNITUDE),
+      toValue: getInterpolatedRotation(this.cardOffsets[0], ROTATION_MAGNITUDE * this.props.rotationMultiplier),
       ...this.props.springConstants
     }).start()
     Animated.spring(this.position, {
@@ -153,14 +157,14 @@ export default class Swiper extends React.Component {
     this.rotationTopCard.setValue(rotation0)
   }
 
-  onSwipe = (currentIndex, cardsData, velocityVector) => {
-    const { offsetAngleMin, offsetAngleMax, onSwiped } = this.props
-    onSwiped(velocityVector)
+  onSwipe = (currentIndex, cardsData) => {
+    const { offsetAngleMin, offsetAngleMax, rotationMultiplier } = this.props
+
 
     this.cardOffsets = updateCardOffsets(this.cardOffsets, offsetAngleMin, offsetAngleMax)
     this.rotationBottomCard.setValue(this.cardOffsets[this.cardOffsets.length - 2])
     const topCardInitialRotation =
-      getInterpolatedRotation(this.cardOffsets[0], ROTATION_MAGNITUDE)
+      getInterpolatedRotation(this.cardOffsets[0], ROTATION_MAGNITUDE * rotationMultiplier )
 
     if (currentIndex === cardsData.length - 1) {
       this.setState({ currentIndex: 0 }, this.resetTopCardAnimatedValues(0, 0, topCardInitialRotation))
@@ -174,16 +178,16 @@ export default class Swiper extends React.Component {
   animateBottomCard = (cb, value) => {
     Animated.timing(this.rotationBottomCard, {
       toValue: value,
-      duration: this.props.bottomCardAnimationDuration
+      duration: this.props.bottomCardAnimationDuration > 0 ? this.props.bottomCardAnimationDuration : 500
     }).start(cb())
   }
-  makeCard = (style, deckIndex, currentIndex, visibleDeckSize, renderCard, cardsData) => {
+  makeCard = (style, deckIndex, currentIndex, deckSize, renderCard, cardsData) => {
     let cardIndex = currentIndex + deckIndex
     if (cardIndex >= cardsData.length) {
       cardIndex = cardIndex - cardsData.length
     }
     const isTopCard = deckIndex === 0
-    const isLastCard = deckIndex === visibleDeckSize - 1
+    const isLastCard = deckIndex === deckSize - 1
     const transform = isTopCard
       ? this.topTransform
       : isLastCard
@@ -205,22 +209,22 @@ export default class Swiper extends React.Component {
       style={style}
     />
   }
-  makeDeck = (style, currentIndex, visibleDeckSize, renderCard, cardsData) => {
+  makeDeck = (style, currentIndex, deckSize, renderCard, cardsData) => {
     let deck = []
-    for (let i = 0; i < visibleDeckSize; i++) {
-      deck.push(this.makeCard(style, i, currentIndex, visibleDeckSize, renderCard, cardsData))
+    for (let i = 0; i < deckSize; i++) {
+      deck.push(this.makeCard(style, i, currentIndex, deckSize, renderCard, cardsData))
     }
     return deck
   }
 
   render() {
     const { currentIndex } = this.state
-    const { visibleDeckSize, renderCard, cardsData, style, containerStyle } = this.props
+    const { deckSize, renderCard, cardsData, style, containerStyle } = this.props
     return (
       <View
         style={{ ...styles.container, ...containerStyle }}
       >
-        {this.makeDeck(style, currentIndex, visibleDeckSize, renderCard, cardsData)}
+        {this.makeDeck(style, currentIndex, deckSize, renderCard, cardsData)}
       </View>
     )
   }
@@ -246,7 +250,7 @@ Swiper.propTypes = {
   cardsData: PropTypes.array.isRequired,
   renderCard: PropTypes.func.isRequired,
   infiniteSwipe: PropTypes.bool,
-  visibleDeckSize: PropTypes.number,
+  deckSize: PropTypes.number,
   offsetAngleMin: PropTypes.number,
   offsetAngleMax: PropTypes.number,
   onSwipe: PropTypes.func,

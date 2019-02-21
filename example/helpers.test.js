@@ -5,8 +5,8 @@ describe('getInitialOffsets', () => {
   test('throws error if missing arguments', () => {
     expect(() => getInitialOffsets( 2, 6)).toThrow(/Missing/)
   })
-  test('throws error if all arguments are not numbers', () => {
-    expect(() => getInitialOffsets('a', 2, '6')).toThrow(/must be numbers/)
+  test('throws error if any arguments are not integers', () => {
+    expect(() => getInitialOffsets(-1.1, 3, '2')).toThrow(/integer/)
   })
   test('throws error if min is greater than max argument', () => {
     expect(() => getInitialOffsets(2, -2, 1)).toThrow(/less than/)
@@ -20,9 +20,9 @@ describe('getInitialOffsets', () => {
   test('returns an array', () => {
     expect(Array.isArray(getInitialOffsets(-2, 2, 3))).toBe(true)
   })
-  test('returns an array of numbers', () => {
+  test('returns an array of integers', () => {
     expect(getInitialOffsets(-2, 2, 3).every((value) => {
-      return typeof value === 'number'
+      return Number.isInteger(value)
     })).toBe(true)
   })
   test('returns an array of unique elements', () => {

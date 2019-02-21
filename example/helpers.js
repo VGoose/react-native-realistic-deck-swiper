@@ -2,14 +2,14 @@ export function getInitialOffsets(offsetAngleMin, offsetAngleMax, deckSize) {
   if(typeof offsetAngleMin === 'undefined' || typeof offsetAngleMax === 'undefined' || typeof deckSize === 'undefined') {
     throw new Error('Missing arguments.')
   }
-  if(typeof offsetAngleMin !== 'number' || typeof offsetAngleMax !== 'number' || typeof deckSize !== 'number') {
-    throw new Error('All arguments must be numbers')
+  if(!Number.isInteger(offsetAngleMin)|| !Number.isInteger(offsetAngleMax) || !Number.isInteger(deckSize)) {
+    throw new Error('All arguments must be integers')
   }
   if(offsetAngleMin >= offsetAngleMax) {
     throw new Error('offsetAngleMin must be less than offsetAngleMax.')
   }
   if(deckSize < 2) {
-    throw new Error('VisibleDeckSize must be two or more.')
+    throw new Error('deckSize must be two or more.')
   }
   if(offsetAngleMax - offsetAngleMin + 1 < deckSize) {
     throw new Error('Min Max integer range must be greater than or equal to deckSize.')
@@ -37,8 +37,8 @@ export function updateCardOffsets(offsets, offsetAngleMin, offsetAngleMax) {
   if(!offsets || !offsetAngleMin || !offsetAngleMax) {
     throw new Error('Missing arguments.')
   }
-  if(!Array.isArray(offsets) || typeof offsetAngleMin !== 'number' || typeof offsetAngleMax !== 'number') {
-    throw new Error('Invalid argument type, expected (offsets = [], offsetAngleMin = number, offsetAngleMax = number.')
+  if(!Array.isArray(offsets) || !Number.isInteger(offsetAngleMin) || !Number.isInteger(offsetAngleMax)) {
+    throw new Error('Invalid argument type, expected (offsets = array, offsetAngleMin = integer, offsetAngleMax = integer.')
   }
   if(offsetAngleMin >= offsetAngleMax) {
     throw new Error('offsetAngleMin must be less than offsetAngleMax.')
@@ -46,8 +46,8 @@ export function updateCardOffsets(offsets, offsetAngleMin, offsetAngleMax) {
   return [...offsets.slice(1), getUniqueElement(offsets.slice(1), offsetAngleMin, offsetAngleMax)]
 }
 export function getInterpolatedRotation(deg, rotation) {
-  if(typeof deg === 'undefined' || typeof rotation === 'undefined' || typeof deg !== 'number' || typeof rotation !== 'number') {
-    throw new Error(`Invalid arguments, expected (deg = number, rotation = number.  Received ${typeof deg} ${typeof rotation}`)
+  if(typeof deg === 'undefined' || typeof rotation === 'undefined' || !Number.isInteger(deg) || !Number.isInteger(rotation)) {
+    throw new Error(`Invalid arguments, expected (deg = integer, rotation = integer.`)
   }
   return deg * rotation / 360
 }
