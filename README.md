@@ -15,7 +15,7 @@ These instructions will get you a copy of the project up and running on your loc
 ## Deck and Card
 
 |Props | required | type| description | default
-|:------------------------|:--|:--| :---|:---:
+|:---|:---|:---| :---|:---:
 | cardsData | required| array | data array | |
 renderCard | required | function | render function, receives cardsData element | |
 |deckSize| optional | integer | number of cards rendered and visible at a time | 3|
@@ -28,7 +28,7 @@ renderCard | required | function | render function, receives cardsData element |
 ## Animation
 
 |Props | required | type| description | default
-|:---------|:--|:--| :---|:---:
+|:---|:---|:---| :---|:---:
 |rotationMultiplier| optional | positive number | multiplier to rotational animation input range, > 1 will slow down rotation animation, < 1 will speed up | 1 |
 |topCardAnimationDuration|optional| positive number | milisecond duration of  top card animation after successful swipe (flying away)| 1000 | 
 |bottomCardAnimationDuration|optional| positive number | milisecond duration of  bottom card animation | 500
@@ -37,14 +37,14 @@ renderCard | required | function | render function, receives cardsData element |
 ## Callbacks
 
 |Props | required | type| description | default
-|:---------|:--|:--| :---|:---:
+|:---|:---|:---| :---|:---:
 |onSwiped| optional | function | callback function to be called on successful card swipe, at gesture release, with velocity vector object {vx, vy}| |
 |onReset|optional|function|callback function to be called on unsuccessful card swipe, at gesture release, with velocity vector object {vx, vy} ||
 
 ## Card Style
 \*style objects can be provided but default styles cannot be changed
 |Props | required | type| description | default
-|:---------|:--|:--| :---|:---:|
+|:---|:---|:---| :---|:---:
 |style|optional|object|card style object|{position: relative\*}|
 |containerStyle|optional|object| Swiper container view style object |{position: absolute\*, transform: []\*, zIndex: number\*}|
 
