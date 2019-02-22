@@ -312,7 +312,6 @@ Swiper.propTypes = {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'relative'
   },
   card: {
     position: 'absolute',

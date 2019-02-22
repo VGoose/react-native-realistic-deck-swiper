@@ -42,11 +42,11 @@ renderCard | required | function | render function, receives cardsData element |
 |onReset|optional|function|callback function to be called on unsuccessful card swipe, at gesture release, with velocity vector object {vx, vy} ||
 
 ## Card Style
-\*style objects can be provided but default styles cannot be changed
+\*style objects can be modified but default properties cannot be changed
 
 |Props | required | type| description | default
 |:---|:---|:---| :---|:---:
-|style|optional|object|card style object|{position: relative\*}|
+|style|optional|object|card style object||
 |containerStyle|optional|object| Swiper container view style object |{position: absolute\*, transform: []\*, zIndex: number\*}|
 
 ## Author
