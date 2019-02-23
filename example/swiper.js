@@ -10,7 +10,7 @@ export default class Swiper extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentIndex: Number.isInteger(this.props.startIndex) && this.props.startIndex >= 0? this.props.startIndex : 0,
+      currentIndex: Number.isInteger(this.props.startIndex) && this.props.startIndex >= 0 ? this.props.startIndex : 0,
       parentDimensions: null,
       cardDimensions: null,
       cardCenter: null,
@@ -49,7 +49,6 @@ export default class Swiper extends React.Component {
   componentDidMount() {
     const { offsetAngleMin, offsetAngleMax, deckSize, rotationMultiplier } = this.props
     this.cardOffsets = getInitialOffsets(offsetAngleMin, offsetAngleMax, deckSize)
-
     this.rotationTopCard.setValue(getInterpolatedRotation(this.cardOffsets[0], ROTATION_MAGNITUDE * rotationMultiplier))
     this.rotationBottomCard.setValue(this.cardOffsets[this.cardOffsets.length - 2])
 
@@ -147,11 +146,13 @@ export default class Swiper extends React.Component {
     Animated.parallel([
       Animated.timing(this.position, {
         toValue: finalPosition,
-        duration: this.props.topCardAnimationDuration
+        duration: this.props.topCardAnimationDuration,
+        useNativeDriver: true
       }),
       Animated.timing(this.rotationTopCard, {
         toValue: finalRotation,
-        duration: this.props.topCardAnimationDuration
+        duration: this.props.topCardAnimationDuration,
+        useNativeDriver: true
       })
     ]
     ).start(() => {
@@ -162,10 +163,12 @@ export default class Swiper extends React.Component {
     this.props.onReset(velocityVector)
     Animated.spring(this.rotationTopCard, {
       toValue: getInterpolatedRotation(this.cardOffsets[0], ROTATION_MAGNITUDE * this.props.rotationMultiplier),
+      useNativeDriver: true,
       ...this.props.springConstants
     }).start()
     Animated.spring(this.position, {
       toValue: { x: 0, y: 0 },
+      useNativeDriver: true,
       ...this.props.springConstants
     }).start()
   }
@@ -220,7 +223,8 @@ export default class Swiper extends React.Component {
   animateBottomCard = (cb, value) => {
     Animated.timing(this.rotationBottomCard, {
       toValue: value,
-      duration: this.props.bottomCardAnimationDuration > 0 ? this.props.bottomCardAnimationDuration : 500
+      duration: this.props.bottomCardAnimationDuration > 0 ? this.props.bottomCardAnimationDuration : 500,
+      useNativeDriver: true
     }).start(cb())
   }
   makeCard = (style, deckIndex, currentIndex, deckSize, renderCard, cardsData) => {
@@ -293,16 +297,72 @@ Swiper.propTypes = {
   cardsData: PropTypes.array.isRequired,
   renderCard: PropTypes.func.isRequired,
   infiniteSwipe: PropTypes.bool,
-  deckSize: PropTypes.number,
-  offsetAngleMin: PropTypes.number,
-  offsetAngleMax: PropTypes.number,
   onSwipe: PropTypes.func,
   onReset: PropTypes.func,
-  startIndex: PropTypes.number,
-  velocityThreshold: PropTypes.number,
-  rotationMultiplier: PropTypes.number,
-  topCardAnimationDuration: PropTypes.number,
-  bottomCardAnimationDuration: PropTypes.number,
+  deckSize: (props, propName, componentName) => {
+    if (!Number.isInteger(props[propName]) || props[propName] < 2) {
+      return new Error(
+        `Invalid prop ${propName} supplied to ${componentName}.  
+        ${propName} must be a positive integer 2 or greater.`
+      );
+    }
+  },
+  offsetAngleMin: (props, propName, componentName) => {
+    if (!Number.isInteger(props[propName])) {
+      return new Error(
+        `Invalid prop ${propName} supplied to ${componentName}.  
+        ${propName} must be an integer.`
+      );
+    }
+  },
+  offsetAngleMax: (props, propName, componentName) => {
+    if (!Number.isInteger(props[propName])) {
+      return new Error(
+        `Invalid prop ${propName} supplied to ${componentName}.  
+        ${propName} must be an integer.`
+      );
+    }
+  },
+  startIndex: (props, propName, componentName) => {
+    if (!Number.isInteger(props[propName]) || props[propName] < 0) {
+      return new Error(
+        `Invalid prop ${propName} supplied to ${componentName}.  
+        ${propName} must be an integer 0 or greater.`
+      );
+    }
+  },
+  velocityThreshold: (props, propName, componentName) => {
+    if (typeof props[propName] !== 'number' || props[propName] < 0) {
+      return new Error(
+        `Invalid prop ${propName} supplied to ${componentName}.  
+        ${propName} must be a positive number.`
+      );
+    }
+  },
+  rotationMultiplier: (props, propName, componentName) => {
+    if (typeof props[propName] !== 'number' || props[propName] < 0) {
+      return new Error(
+        `Invalid prop ${propName} supplied to ${componentName}.  
+        ${propName} must be a positive number.`
+      );
+    }
+  },
+  topCardAnimationDuration: (props, propName, componentName) => {
+    if (typeof props[propName] !== 'number' || props[propName] < 0) {
+      return new Error(
+        `Invalid prop ${propName} supplied to ${componentName}.  
+        ${propName} must be a positive number.`
+      );
+    }
+  },
+  bottomCardAnimationDuration: (props, propName, componentName) => {
+    if (typeof props[propName] !== 'number' || props[propName] < 0) {
+      return new Error(
+        `Invalid prop ${propName} supplied to ${componentName}.  
+        ${propName} must be a positive number.`
+      );
+    }
+  },
   springConstants: PropTypes.shape({
     stiffness: PropTypes.number,
     damping: PropTypes.number,

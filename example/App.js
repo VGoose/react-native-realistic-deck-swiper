@@ -29,10 +29,10 @@ export default class App extends React.Component {
         <Swiper
           cardsData={Data}
           renderCard={this._renderCard}
-          startIndex={-4}
+          startIndex={4}
           visibleDeckSize={3}
-          offSetAngleMin={-3}
-          offSetAngleMax={3}
+          offsetAngleMin={-3}
+          offsetAngleMax={3}
           velocityThreshold={0.4}
           rotationMultiplier={1}
           bottomCardAnimationDuration={500}
