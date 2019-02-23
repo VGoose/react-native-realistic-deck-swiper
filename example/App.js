@@ -25,11 +25,13 @@ export default class App extends React.Component {
   }
   render() {
     return (
-      <View style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
         <Swiper
+          infiniteSwipe={true}
           cardsData={Data}
           renderCard={this._renderCard}
-          startIndex={4}
+          startIndex={0}
+          onSwipedAll={() => console.log('done')}
           visibleDeckSize={3}
           offsetAngleMin={-3}
           offsetAngleMax={3}
@@ -49,7 +51,7 @@ export default class App extends React.Component {
             borderColor: 'black',
             borderWidth: 1,
             borderRadius: 5,
-  
+
           }}
         />
       </View>
