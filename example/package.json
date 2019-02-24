@@ -2,7 +2,9 @@
   "main": "node_modules/expo/AppEntry.js",
   "jest": {
     "preset": "react-native",
-    "setupFilesAfterEnv": ["<rootDir>setup-tests.js"]
+    "setupFilesAfterEnv": [
+      "<rootDir>setup-tests.js"
+    ]
   },
   "scripts": {
     "start": "expo start",
@@ -15,7 +17,8 @@
     "expo": "^32.0.0",
     "mathjs": "^5.4.2",
     "react": "16.5.0",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz"
+    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
+    "react-native-realistic-deck-swiper": "^0.1.0"
   },
   "devDependencies": {
     "babel-preset-expo": "^5.0.0",
@@ -25,5 +28,4 @@
     "react-dom": "^16.8.3"
   },
   "private": true
-
 }

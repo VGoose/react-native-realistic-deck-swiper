@@ -1,8 +1,6 @@
-import React from 'react';
-import { View, Text } from 'react-native';
-
-import Swiper from './swiper'
-console.log(Object.keys(Swiper))
+import React from 'react'
+import { View, Text } from 'react-native'
+import Swiper from 'react-native-realistic-deck-swiper'
 
 const Data = [
   { id: "1" },
