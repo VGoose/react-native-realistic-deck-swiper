@@ -1,5 +1,6 @@
 
 
+
 # React-Native-Realistic-Deck-Swiper
 
 Swipeable deck with realistic physics, based on NYer Today app's cartoons swipe deck. 
@@ -10,7 +11,60 @@ Swipeable deck with realistic physics, based on NYer Today app's cartoons swipe 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
 
-## Installing
+## Installation and Usage
+
+```
+npm i react-native-realistic-deck-swiper
+```
+```javascript
+import React from 'react'
+import { View, Text } from 'react-native'
+import Swiper from 'react-native-realistic-deck-swiper'
+
+const Data = [
+  { id: "1" },
+  { id: "2" },
+  { id: "3" },
+  { id: "4" },
+  { id: "5" },
+]
+export default class App extends React.Component {
+  _renderCard = (item) => {
+    return <View style={{
+      width: 300,
+      height: 400,
+      borderRadius: 5,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }}>
+      <Text style={{ fontSize: 80 }}>{item.id}</Text>
+    </View>
+  }
+  render() {
+    return (
+      <View style={{ flex: 1 }}>
+        <Swiper
+          cardsData={Data}
+          renderCard={this._renderCard}
+          containerStyle={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          style={{
+            margin: 20,
+            backgroundColor: 'white',
+            borderColor: 'black',
+            borderWidth: 1,
+            borderRadius: 5,
+          }}
+        />
+      </View>
+    );
+  }
+}
+```
 
 
 ## Deck and Card
@@ -60,6 +114,7 @@ Anh Vo
 This project is licensed under the MIT License.
 
 ## Acknowledgments
+
 
 
 

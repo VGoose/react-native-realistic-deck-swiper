@@ -1,10 +1,9 @@
 {
-  "name": "react-native-deck-swiper",
+  "name": "react-native-realistic-deck-swiper",
   "version": "0.1.0",
   "description": "Deck swiper with realistic physics.",
   "main": "swiper.js",
-  "directories": {},
-  "scripts": {},
+  "files": ["swiper.js", "helpers.js", "helpers.test.js"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/VGoose/react-native-realistic-deck-swiper.git"
@@ -17,23 +16,17 @@
     "cards",
     "tinder",
     "realistic",
-    "physics",
+    "physics", 
     "rotate",
     "spin",
     "velocity"
   ],
   "author": "Anh Vo",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/VGoose/react-native-deck-swiper/issues"
-  },
-  "homepage": "https://github.com/VGoose/react-native-deck-swiper#readme",
+  "homepage": "https://github.com/VGoose/react-native-realistic-deck-swiper#readme",
   "dependencies": {
-    "prop-types": "^15.7.2",
-    "react": "^16.8.3",
-    "react-native": "^0.58.5"
+    "prop-types": "^15.7.2"
   },
   "devDependencies": {
-    "jest": "^24.1.0"
   }
 }
