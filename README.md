@@ -6,10 +6,6 @@
 Swipeable deck with realistic physics, based on NYer Today app's cartoons swipe deck. 
 
 ![Demo](https://media.giphy.com/media/ddLtSmX0gvf6WILyNY/giphy.gif)
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
 
 ## Installation and Usage
 
@@ -67,7 +63,7 @@ export default class App extends React.Component {
 ```
 
 
-## Deck and Card
+## Deck and Card Props
 
 |Props | required | type| description | default
 |:---|:---|:---| :---|:---:
@@ -80,7 +76,7 @@ renderCard | required | function | render function, receives cardsData element |
 |startIndex| optional | integer | cardsData index for first card | 0|
 |velocityThreshold| optional | positive number | velocity magnitude - compared to gesture velocity magnitude at release to determine successful or unsuccessful swipe | 0.4|
 
-## Animation
+## Animation Props
 
 |Props | required | type| description | default
 |:---|:---|:---| :---|:---:
@@ -89,7 +85,7 @@ renderCard | required | function | render function, receives cardsData element |
 |bottomCardAnimationDuration|optional| positive number | milisecond duration of  bottom card animation | 500
 |springConstants|optional| object  | control reset animation on unsuccessful swipe, object signature: { stiffness, damping, mass } | {stiffness: 50, damping: 30, mass: 0.5} | 
 
-## Callbacks
+## Callback Props
 
 |Props | required | type| description | default
 |:---|:---|:---| :---|:---:
@@ -97,7 +93,7 @@ renderCard | required | function | render function, receives cardsData element |
 |onSwipedAll| optional | function | callback function to be called on successful last card swipe regardless of infiniteSwipe prop| |
 |onReset|optional|function|callback function to be called on unsuccessful card swipe, with velocity vector object {vx, vy} ||
 
-## Card Style
+## Card Style Props
 \*style objects can be modified but default properties cannot be changed
 
 |Props | required | type| description | default
