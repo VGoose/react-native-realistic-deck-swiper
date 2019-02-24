@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 
 import Swiper from './swiper'
+console.log(Object.keys(Swiper))
 
 const Data = [
   { id: "1" },
@@ -31,15 +32,15 @@ export default class App extends React.Component {
           cardsData={Data}
           renderCard={this._renderCard}
           startIndex={0}
-          onSwipedAll={() => console.log('done')}
+          onSwipedAll={() => console.log('onSwipedAll')}
           visibleDeckSize={3}
           offsetAngleMin={-3}
           offsetAngleMax={3}
           velocityThreshold={0.4}
           rotationMultiplier={1}
           bottomCardAnimationDuration={500}
-          onSwiped={(vector) => console.log('vx is: ', vector.vx, ' ', 'vy is: ', vector.vy)}
-          onReset={(vector) => console.log('reset ', vector.vx)}
+          onSwiped={(vector) => console.log('onSwiped, vx is: ', vector.vx, ' ', 'vy is: ', vector.vy)}
+          onReset={(vector) => console.log('onReset ', vector.vx)}
           containerStyle={{
             flex: 1,
             alignItems: 'center',
@@ -51,7 +52,6 @@ export default class App extends React.Component {
             borderColor: 'black',
             borderWidth: 1,
             borderRadius: 5,
-
           }}
         />
       </View>

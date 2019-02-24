@@ -1,5 +1,5 @@
 'use strict'
-const { getInitialOffsets, updateCardOffsets, getInterpolatedRotation } = require('./helpers')
+const { getInitialOffsets, updateCardOffsets, getInterpolatedRotation } = require('../helpers')
 
 describe('getInitialOffsets', () => {
   test('throws error if missing arguments', () => {

@@ -1,6 +1,6 @@
 
 
-# React-Native-Swipeable-Deck
+# React-Native-Realistic-Deck-Swiper
 
 Swipeable deck with realistic physics, based on NYer Today app's cartoons swipe deck. 
 

@@ -76,7 +76,6 @@ export default class Swiper extends React.Component {
     }
 
   }
-
   static defaultProps = {
     offsetAngleMin: -4,
     offsetAngleMax: 4,
@@ -98,7 +97,6 @@ export default class Swiper extends React.Component {
     style: {},
     containerStyle: {}
   }
-
   initializePanResponder = () => {
     this.panResponder = PanResponder.create({
       onStartShouldSetPanResponder: (e, gestureState) => true,
@@ -203,12 +201,10 @@ export default class Swiper extends React.Component {
         parentDimensions: parentDimensions,
       })
   }
-
   resetTopCardAnimatedValues = (x0, y0, rotation0) => {
     this.position.setValue({ x: x0, y: y0 })
     this.rotationTopCard.setValue(rotation0)
   }
-
   onSwipe = (currentIndex, cardsData, velocityVector) => {
     const { offsetAngleMin, offsetAngleMax, rotationMultiplier, infiniteSwipe, onSwiped, onSwipedAll } = this.props
     onSwiped(velocityVector)
@@ -239,7 +235,6 @@ export default class Swiper extends React.Component {
     }
 
   }
-
   animateBottomCard = (cb, value) => {
     Animated.timing(this.rotationBottomCard, {
       toValue: value,
@@ -290,7 +285,6 @@ export default class Swiper extends React.Component {
     }
     return deck
   }
-
   render() {
     const { currentIndex } = this.state
     const { deckSize, renderCard, cardsData, style, containerStyle, infiniteSwipe } = this.props

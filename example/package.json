@@ -1,10 +1,15 @@
 {
   "main": "node_modules/expo/AppEntry.js",
+  "jest": {
+    "preset": "react-native",
+    "setupFilesAfterEnv": ["<rootDir>setup-tests.js"]
+  },
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "test": "jest"
   },
   "dependencies": {
     "expo": "^32.0.0",
@@ -13,7 +18,12 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz"
   },
   "devDependencies": {
-    "babel-preset-expo": "^5.0.0"
+    "babel-preset-expo": "^5.0.0",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.9.1",
+    "jest-enzyme": "^7.0.1",
+    "react-dom": "^16.8.3"
   },
   "private": true
+
 }
