@@ -106,11 +106,14 @@ export default class Swiper extends React.Component {
       onPanResponderMove: (e, gestureState) => {
         const { moveX, moveY, dx, dy } = gestureState
         const { cardCenter } = this.state
+        const { rotationMultiplier } = this.props
         let x = moveX - cardCenter.x
         let y = moveY - cardCenter.y
         let rotation = x * dy - y * dx
-
-        this.rotationTopCard.setValue(rotation)
+        const topCardInitialRotation =
+          getInterpolatedRotation(this.cardOffsets[0], ROTATION_MAGNITUDE * rotationMultiplier)
+        let totalRotation = rotation + topCardInitialRotation
+        this.rotationTopCard.setValue(totalRotation)
         Animated.event([null, { dx: this.position.x, dy: this.position.y }])(null, gestureState)
       },
       onPanResponderRelease: (e, gestureState) => {
