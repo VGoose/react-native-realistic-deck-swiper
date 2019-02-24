@@ -1,9 +1,10 @@
 
+
 # React-Native-Swipeable-Deck
 
 Swipeable deck with realistic physics, based on NYer Today app's cartoons swipe deck. 
 
-![Demo](https://media.giphy.com/media/oX7tHujPDy8mBs246V/giphy.gif)
+![Demo](https://media.giphy.com/media/ddLtSmX0gvf6WILyNY/giphy.gif)
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
@@ -38,8 +39,9 @@ renderCard | required | function | render function, receives cardsData element |
 
 |Props | required | type| description | default
 |:---|:---|:---| :---|:---:
-|onSwiped| optional | function | callback function to be called on successful card swipe, at gesture release, with velocity vector object {vx, vy}| |
-|onReset|optional|function|callback function to be called on unsuccessful card swipe, at gesture release, with velocity vector object {vx, vy} ||
+|onSwiped| optional | function | callback function to be called on successful card swipe, with velocity vector object {vx, vy}| |
+|onSwipedAll| optional | function | callback function to be called on successful last card swipe regardless of infiniteSwipe prop| |
+|onReset|optional|function|callback function to be called on unsuccessful card swipe, with velocity vector object {vx, vy} ||
 
 ## Card Style
 \*style objects can be modified but default properties cannot be changed
