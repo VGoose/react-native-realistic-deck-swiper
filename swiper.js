@@ -134,8 +134,6 @@ export default class Swiper extends React.Component {
 
         const vMagnitude = Math.sqrt(vx * vx + vy * vy)
         if (vMagnitude > validThreshold) {
-
-
           this.animateCardOffScreen(finalPosition, finalRotation,
             () => this.onSwipe(currentIndex, cardsData, { vx: vx, vy: vy })
           )
