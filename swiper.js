@@ -320,6 +320,7 @@ Swiper.propTypes = {
   cardsData: PropTypes.array.isRequired,
   renderCard: PropTypes.func.isRequired,
   infiniteSwipe: PropTypes.bool,
+  onSwipeStart: PropTypes.func,
   onSwiped: PropTypes.func,
   onSwipedAll: PropTypes.func,
   onReset: PropTypes.func,
