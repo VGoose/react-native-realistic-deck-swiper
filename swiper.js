@@ -82,7 +82,7 @@ export default class Swiper extends React.Component {
     offsetAngleMax: 4,
     deckSize: 3,
     infiniteSwipe: true,
-    onSwipe: () => { },
+    onSwipeStart: () => { },
     onSwiped: () => { },
     onReset: () => { },
     onSwipedAll: () => { },
@@ -135,7 +135,7 @@ export default class Swiper extends React.Component {
 
         const vMagnitude = Math.sqrt(vx * vx + vy * vy)
         if (vMagnitude > validThreshold) {
-          this.props.onSwipe(currentIndex)
+          this.props.onSwipeStart(currentIndex)
           this.animateCardOffScreen(finalPosition, finalRotation,
             () => this.onSwipe(currentIndex, cardsData, { vx: vx, vy: vy })
           )
@@ -207,7 +207,7 @@ export default class Swiper extends React.Component {
     this.rotationTopCard.setValue(rotation0)
   }
   onSwipe = (currentIndex, cardsData, velocityVector) => {
-    const { offsetAngleMin, offsetAngleMax, rotationMultiplier, infiniteSwipe, onSwipe, onSwiped, onSwipedAll } = this.props
+    const { offsetAngleMin, offsetAngleMax, rotationMultiplier, infiniteSwipe, onSwipeStart, onSwiped, onSwipedAll } = this.props
     onSwiped(velocityVector)
 
     this.cardOffsets = updateCardOffsets(this.cardOffsets, offsetAngleMin, offsetAngleMax)
