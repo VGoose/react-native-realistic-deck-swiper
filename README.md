@@ -94,6 +94,7 @@ renderCard | required | function | render function, receives cardsData element |
 |Props | required | type| description | default
 |:---|:---|:---| :---|:---:
 |onSwipeStart| optional | function | callback function to be called on successful card swipe, with current index| |
+|onPressed| optional | function | callback function to be called after pressing card, with current index| |
 |onSwiped| optional | function | callback function to be called after successful card swipe, with velocity vector object {vx, vy}| |
 |onSwipedAll| optional | function | callback function to be called after successful last card swipe regardless of infiniteSwipe prop| |
 |onReset|optional|function|callback function to be called on unsuccessful card swipe, with velocity vector object {vx, vy} ||

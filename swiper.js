@@ -86,6 +86,7 @@ export default class Swiper extends React.Component {
     onSwiped: () => { },
     onReset: () => { },
     onSwipedAll: () => { },
+    onPressed: () => { },
     startIndex: 0,
     velocityThreshold: 0.4,
     rotationMultiplier: 1,
@@ -139,6 +140,9 @@ export default class Swiper extends React.Component {
           this.animateCardOffScreen(finalPosition, finalRotation,
             () => this.onSwipe(currentIndex, cardsData, { vx: vx, vy: vy })
           )
+        }
+        else if (dx < 1 && dy < 1) {
+          this.props.onPressed(currentIndex)
         }
         else {
           this.animateReset({ vx: vx, vy: vy })
