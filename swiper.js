@@ -141,7 +141,7 @@ export default class Swiper extends React.Component {
             () => this.onSwipe(currentIndex, cardsData, { vx: vx, vy: vy })
           )
         }
-        else if (dx < 1 && dy < 1) {
+        else if (dx === 0 && dy === 0) {
           this.props.onPressed(currentIndex)
         }
         else {
