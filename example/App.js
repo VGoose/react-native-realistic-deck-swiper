@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import Swiper from 'react-native-realistic-deck-swiper'
 
 const Data = [
@@ -11,22 +11,25 @@ const Data = [
 ]
 export default class App extends React.Component {
   _renderCard = (item) => {
-    return <View style={{
-      width: 300,
-      height: 400,
-      borderRadius: 5,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    }}>
+    return <TouchableOpacity
+      onPress={()=>console.log('pressed from view')}
+      style={{
+        width: 300,
+        height: 400,
+        borderRadius: 5,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
       <Text style={{ fontSize: 80 }}>{item.id}</Text>
-    </View>
+    </TouchableOpacity>
   }
   render() {
     return (
       <View style={{ flex: 1 }}>
         <Swiper
           infiniteSwipe={true}
+          onPressed={() => console.log('pressed')}
           cardsData={Data}
           renderCard={this._renderCard}
           startIndex={0}

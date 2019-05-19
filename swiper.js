@@ -21,7 +21,7 @@ export default class Swiper extends React.Component {
     this.position = new Animated.ValueXY({ x: 0, y: 0 })
     this.rotationTopCard = new Animated.Value(0)
     this.rotationBottomCard = new Animated.Value(0)
-    this.cardOffsets = []
+    this.cardOffsets = getInitialOffsets(this.props.offsetAngleMin, this.props.offsetAngleMax, this.props.deckSize)
 
     this.rotateTop = this.rotationTopCard.interpolate({
       inputRange: [
@@ -48,8 +48,7 @@ export default class Swiper extends React.Component {
     }
   }
   componentDidMount() {
-    const { offsetAngleMin, offsetAngleMax, deckSize, rotationMultiplier } = this.props
-    this.cardOffsets = getInitialOffsets(offsetAngleMin, offsetAngleMax, deckSize)
+    const { rotationMultiplier } = this.props
     this.rotationTopCard.setValue(getInterpolatedRotation(this.cardOffsets[0], ROTATION_MAGNITUDE * rotationMultiplier))
     this.rotationBottomCard.setValue(this.cardOffsets[this.cardOffsets.length - 2])
 
@@ -102,6 +101,7 @@ export default class Swiper extends React.Component {
   initializePanResponder = () => {
     this.panResponder = PanResponder.create({
       onStartShouldSetPanResponder: (e, gestureState) => true,
+      onMoveShouldSetPanResponder: (e, gestureState) => true,
       onPanResponderGrant: (e, gestureState) => { },
       onPanResponderMove: (e, gestureState) => {
         const { moveX, moveY, dx, dy } = gestureState
