@@ -6,6 +6,11 @@
 Swipeable deck with realistic physics, based on NYer Today app's cartoons swipe deck.  [See a write up of how this library works!](https://medium.com/@anhvouw/imitating-nyer-todays-realistic-swipe-deck-with-react-native-animation-65ae04915c15)
 
 ![Demo](https://media.giphy.com/media/ddLtSmX0gvf6WILyNY/giphy.gif)
+
+## Change Log
+
+v0.1.3 Allow touchables composed within cards, fix android undefined rotation transform
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
